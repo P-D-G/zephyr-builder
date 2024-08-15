@@ -6,6 +6,12 @@ stages:
 services:
   - docker:dind
 
+before_script:
+  # docker login asks for the password to be passed through stdin for security
+  # we use $CI_REGISTRY_PASSWORD here which is a special variable provided by GitLab
+  # https://docs.gitlab.com/ce/ci/variables/predefined_variables.html
+  - echo -n $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+
 Build:
   stage: build
   script:
@@ -21,3 +27,4 @@ Build:
       --label "org.opencontainers.image.version=$CI_COMMIT_REF_NAME"
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
       .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
