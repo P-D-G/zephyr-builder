@@ -69,3 +69,7 @@ exported_bins="/usr/local/bin/west /usr/local/bin/zephyr-setup"
 
 === Acknowledgements
 
+Thanks to:
+
+* https://github.com/embeddedcontainers/zephyr[embeddedcontainers/zephyr] for the idea of splitting between the base image
+* https://blog.callr.tech/building-docker-images-with-gitlab-ci-best-practices/[Florent Chauveau] for the CI/CD best practices. I learnt a lot.
