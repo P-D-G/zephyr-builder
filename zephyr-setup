@@ -1,0 +1,3 @@
+#!/bin/sh
+
+(cd $ZEPHYR_SDK_DIR && sudo ./setup.sh "$@")

@@ -42,3 +42,4 @@ RUN export sdk_file_name="zephyr-sdk-${ZEPHYR_SDK_VERSION}_linux-$(uname -m)_min
   && tar -xvf ${sdk_file_name} -C ${ZEPHYR_SDK_INSTALL_DIR} --strip-components=1 \
   && ${ZEPHYR_SDK_INSTALL_DIR}/setup.sh -c ${ZEPHYR_SDK_OPTIONS} \
   && rm ${sdk_file_name}
+COPY --chmod=0755 zephyr-setup /usr/local/bin/zephyr-setup
