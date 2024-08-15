@@ -1,6 +1,6 @@
 == zephyr builder
 
-A Docker/Podman image to build Zephyr firmwares, compatible with distrobox.
+A Docker/Podman image to build Zephyr firmwares, compatible with https://github.com/89luca89/distrobox[distrobox].
 
 === What's in it
 
