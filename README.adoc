@@ -1,0 +1,71 @@
+== zephyr builder
+
+A Docker/Podman image to build Zephyr firmwares, compatible with distrobox.
+
+=== What's in it
+
+The image contains all the infrastructure to build a Zephyr firmware, except
+the toolchains, to make the image lighter. The toolchains can be installed
+using the `zephyr-setup` utility, which simply calls the minimal toolchain
+`setup.sh` installer with the same arguments. This includes:
+
+* All dependencies as specified in https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies[Zephyr documentation]
+* All Python requirements for both https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/requirements.txt[Zephyr] and https://github.com/mcu-tools/mcuboot/blob/main/scripts/requirements.txt[MCUboot]
+* The minimal Zephyr SDK, installed in `/opt`
+
+The image was tested with `podman`, but should be fine with `docker`.
+
+=== Building the image
+
+[source,shell]
+---
+git clone https://gitlab.com/PDG/zephyr-builder.git
+cd zephyr-builder
+podman build -t my-image-tag .
+---
+
+If needed, it is possible to use build arguments to install a specific version
+of the SDK and specific toolchains:
+
+[source,shell]
+---
+podman build -t my-image-tag \
+	--build-arg="ZEPHYR_SDK_VERSION=0.16.4" \
+	--build-arg="ZEPHYR_SDK_OPTIONS=-c -t arm-zephyr-eabi -t x86_64-zephyr-elf" \
+	.
+---
+
+
+=== Using in your own image
+
+This will create an image which extends the SDK by installing the
+`arm-zephyr-eabi` and `x86_64-zephyr-elf` toolchains.
+
+.Dockerfile
+[source,dockerfile]
+---
+FROM registry.gitlab.com/pdg/zephyr-builder:latest
+
+RUN ${ZEPHYR_SDK_DIR}/setup.sh -c -t arm-zephyr-eabi -t x86_64-zephyr-elf
+---
+
+=== Using in distrobox
+
+This will create a distrobox based on this image, with `arm-zephyr-eabi` and
+`x86_64-zephyr-elf` installed, and export `west` and `zephyr-setup` to the host
+to transparently install new toolchains and build firmwares, without manually
+launching the box.
+
+.distrobox.ini
+[source,ini]
+---
+[zephyr-builder]
+image=registry.gitlab.com/pdg/zephyr-builder:latest
+pull=true
+replace=true
+init_hooks="/usr/local/bin/zephyr-setup -c -t arm-zephyr-eabi -t x86_64-zephyr-elf"
+exported_bins="/usr/local/bin/west /usr/local/bin/zephyr-setup"
+---
+
+=== Acknowledgements
+
